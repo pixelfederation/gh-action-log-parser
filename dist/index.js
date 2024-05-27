@@ -2727,66 +2727,86 @@ exports["default"] = _default;
 
 const core = __nccwpck_require__(186);
 const fs = __nccwpck_require__(147);
-const path = __nccwpck_require__(17);
 const readline = __nccwpck_require__(521);
 
 async function loadPatterns(logType) {
-  // Construct the file path using the patterns subdirectory and logType
-  const patternsPath = path.join(__dirname, 'patterns', `${logType}.json`);
-  console.log(`patternsPath: ${patternsPath}`)
-  console.log(`__dirname: ${__dirname}`)
-  console.log(`logType: ${logType}`)
-
-
   try {
-    const patternsData = fs.readFileSync(patternsPath, 'utf8');
-    return JSON.parse(patternsData).map(pattern => ({
+    const patternsPath = `./patterns/${logType}.json`;
+    const patterns = await __nccwpck_require__(70)(patternsPath);
+    return patterns.default.map(pattern => ({
       ...pattern,
       regex: new RegExp(pattern.regex),
     }));
   } catch (error) {
     core.setFailed(`Failed to load patterns file for logType '${logType}': ${error.message}`);
-    return []; // Return an empty array to prevent further execution
+    return [];
   }
 }
 
-async function checkFile(filePath) {
+async function checkFile(filePath, patterns) {
   try {
-    const fileStream = fs.createReadStream(filePath)
+    const fileStream = fs.createReadStream(filePath);
     const rl = readline.createInterface({
       input: fileStream,
       crlfDelay: Infinity
-    })
+    });
 
-    let lineNumber = 0
+    let lineNumber = 0;
 
     for await (const line of rl) {
-      lineNumber++
-      // Simplified logic for demonstration
+      lineNumber++;
+
       patterns.forEach(pattern => {
         if (pattern.regex.test(line)) {
-          console.log(`Line ${lineNumber}: ${pattern.result}`)
-          // Use core.setOutput if you need to pass this information to other steps
+          let message = `Line ${lineNumber}: ${pattern.result}`;
+          if (pattern.showLine && pattern.showLine > 0) {
+            message += ` | Line content: "${line}"`;
+          }
+          console.log(message);
         }
-      })
+      });
     }
   } catch (error) {
-    core.setFailed(error.message)
+    core.setFailed(`An error occurred while processing the file: ${error.message}`);
   }
 }
 
 async function run() {
-  const filePath = core.getInput('filePath');
-  const logType = core.getInput('logType'); // Get the log type input
-  const patterns = await loadPatterns(logType); // Load patterns based on logType
+  try {
+    const filePath = core.getInput('filePath');
+    const logType = core.getInput('logType');
 
-  if (patterns.length > 0) {
-    await checkFile(filePath, patterns);
+    const patterns = await loadPatterns(logType);
+
+    if (patterns && patterns.length > 0) {
+      await checkFile(filePath, patterns);
+    }
+  } catch (error) {
+    core.setFailed(`Action failed with error: ${error}`);
   }
 }
 
-run().catch(err => core.setFailed(err.message));
+run();
 
+
+/***/ }),
+
+/***/ 70:
+/***/ ((module) => {
+
+function webpackEmptyAsyncContext(req) {
+	// Here Promise.resolve().then() is used instead of new Promise() to prevent
+	// uncaught exception popping up in devtools
+	return Promise.resolve().then(() => {
+		var e = new Error("Cannot find module '" + req + "'");
+		e.code = 'MODULE_NOT_FOUND';
+		throw e;
+	});
+}
+webpackEmptyAsyncContext.keys = () => ([]);
+webpackEmptyAsyncContext.resolve = webpackEmptyAsyncContext;
+webpackEmptyAsyncContext.id = 70;
+module.exports = webpackEmptyAsyncContext;
 
 /***/ }),
 
@@ -2919,6 +2939,11 @@ module.exports = require("util");
 /******/ 	}
 /******/ 	
 /************************************************************************/
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__nccwpck_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/compat */
 /******/ 	
 /******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";
