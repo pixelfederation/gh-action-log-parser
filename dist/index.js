@@ -2759,7 +2759,7 @@ function loadPatterns(logType) {
 async function checkFile(filePath, patterns) {
   if (!fs.existsSync(filePath)) {
     core.setFailed(`The specified file does not exist: ${filePath}`);
-    return; // Exit the function if the file does not exist
+    return;
   }
 
   try {
@@ -2770,42 +2770,60 @@ async function checkFile(filePath, patterns) {
     });
 
     let lineNumber = 0;
-    let linesBuffer = []; // Buffer to store recent lines for context
+    let pendingMatches = []; // To hold matches and print them once we have enough context
 
     for await (const line of rl) {
       lineNumber++;
+      const newPendingMatches = [];
 
-      // Update the rolling buffer of recent lines
-      linesBuffer.push(line);
-
-      patterns.forEach(pattern => {
-        const regex = new RegExp(pattern.regex);
-        if (regex.test(line)) {
-          // Always print the line number and result
-          let message = `Line ${lineNumber}: ${pattern.result}`;
-
-          // If showLine is 1 or more, include the context lines
-          if (pattern.showLine > 0) {
-            // Grab the last N lines from the buffer, including the current line
-            const contextLines = linesBuffer.slice(-pattern.showLine).join("\n");
-            message += `\nContext Lines:\n${contextLines}`;
-          }
-
-          console.log(message);
+      // Check pending matches to see if we can resolve them now
+      pendingMatches.forEach(match => {
+        if (lineNumber - match.lineNumber < match.showLine) {
+          // Still collecting context lines for this match
+          match.context.push(line);
+          newPendingMatches.push(match); // Keep in pending
+        } else {
+          // We have all needed context lines, print the match
+          printMatch(match);
         }
       });
 
-      // Limit the size of linesBuffer to the maximum showLine value to conserve memory
-      const maxShowLine = Math.max(...patterns.map(p => p.showLine), 1); // Ensure at least 1
-      while (linesBuffer.length > maxShowLine) {
-        linesBuffer.shift(); // Remove the oldest line
-      }
+      // Update the list of pending matches
+      pendingMatches = newPendingMatches;
+
+      // Check the current line against each pattern
+      patterns.forEach(pattern => {
+        const regex = new RegExp(pattern.regex);
+        if (regex.test(line)) {
+          const match = {
+            lineNumber: lineNumber,
+            showLine: pattern.showLine,
+            result: pattern.result,
+            context: [line], // start context with matching line
+          };
+          if (pattern.showLine > 1) {
+            pendingMatches.push(match); // Defer printing for additional context
+          } else {
+            printMatch(match); // Print immediately if no additional context is needed
+          }
+        }
+      });
     }
+
+    // Print any remaining matches
+    pendingMatches.forEach(match => printMatch(match));
   } catch (error) {
     core.setFailed(`An error occurred while processing the file: ${error.message}`);
   }
 }
 
+function printMatch(match) {
+  let message = `Line ${match.lineNumber}: ${match.result}`;
+  if (match.showLine && match.showLine > 0) {
+    message += `\nContext Lines:\n${match.context.join("\n")}`;
+  }
+  console.log(message);
+}
 // async function checkFile(filePath, patterns) {
 //   // Check if the file exists before attempting to open it
 //   if (!fs.existsSync(filePath)) {
