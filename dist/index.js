@@ -2804,7 +2804,7 @@ async function run() {
     const filePath = core.getInput('filePath');
     const logType = core.getInput('logType');
 
-    console.log(`_ok6_`)
+    console.log(`_ok7_`)
     const patterns = await loadPatterns(logType);
 
     // if (patterns && patterns.length > 0) {
