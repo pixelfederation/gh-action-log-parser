@@ -2723,62 +2723,50 @@ exports["default"] = _default;
 /***/ }),
 
 /***/ 713:
-/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __nccwpck_require__) => {
 
 const core = __nccwpck_require__(186)
-const { wait } = __nccwpck_require__(312)
+const fs = __nccwpck_require__(147)
+const readline = __nccwpck_require__(521)
 
-/**
- * The main function for the action.
- * @returns {Promise<void>} Resolves when the action is complete.
- */
-async function run() {
+// Assuming patterns.json is placed in the same directory, or adjust accordingly
+const patterns = JSON.parse(fs.readFileSync('./patterns.json', 'utf8')).map(
+  pattern => ({
+    ...pattern,
+    regex: new RegExp(pattern.regex)
+  })
+)
+
+async function checkFile(filePath) {
   try {
-    const ms = core.getInput('milliseconds', { required: true })
+    const fileStream = fs.createReadStream(filePath)
+    const rl = readline.createInterface({
+      input: fileStream,
+      crlfDelay: Infinity
+    })
 
-    // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
-    core.debug(`Waiting ${ms} milliseconds ...`)
+    let lineNumber = 0
 
-    // Log the current timestamp, wait, then log the new timestamp
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
-
-    // Set outputs for other workflow steps to use
-    core.setOutput('time', new Date().toTimeString())
+    for await (const line of rl) {
+      lineNumber++
+      // Simplified logic for demonstration
+      patterns.forEach(pattern => {
+        if (pattern.regex.test(line)) {
+          console.log(`Line ${lineNumber}: ${pattern.result}`)
+          // Use core.setOutput if you need to pass this information to other steps
+        }
+      })
+    }
   } catch (error) {
-    // Fail the workflow run if an error occurs
     core.setFailed(error.message)
   }
 }
 
-module.exports = {
-  run
-}
+// Get inputs
+const filePath = core.getInput('file-path')
+const showLines = core.getInput('show-lines') // Use this variable as needed in your logic
 
-
-/***/ }),
-
-/***/ 312:
-/***/ ((module) => {
-
-/**
- * Wait for a number of milliseconds.
- *
- * @param {number} milliseconds The number of milliseconds to wait.
- * @returns {Promise<string>} Resolves with 'done!' after the wait is over.
- */
-async function wait(milliseconds) {
-  return new Promise(resolve => {
-    if (isNaN(milliseconds)) {
-      throw new Error('milliseconds not a number')
-    }
-
-    setTimeout(() => resolve('done!'), milliseconds)
-  })
-}
-
-module.exports = { wait }
+checkFile(filePath)
 
 
 /***/ }),
@@ -2852,6 +2840,14 @@ module.exports = require("os");
 
 "use strict";
 module.exports = require("path");
+
+/***/ }),
+
+/***/ 521:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("readline");
 
 /***/ }),
 

@@ -1,30 +1,42 @@
 const core = require('@actions/core')
-const { wait } = require('./wait')
+const fs = require('fs')
+const readline = require('readline')
 
-/**
- * The main function for the action.
- * @returns {Promise<void>} Resolves when the action is complete.
- */
-async function run() {
+// Assuming patterns.json is placed in the same directory, or adjust accordingly
+const patterns = JSON.parse(fs.readFileSync('./patterns.json', 'utf8')).map(
+  pattern => ({
+    ...pattern,
+    regex: new RegExp(pattern.regex)
+  })
+)
+
+async function checkFile(filePath) {
   try {
-    const ms = core.getInput('milliseconds', { required: true })
+    const fileStream = fs.createReadStream(filePath)
+    const rl = readline.createInterface({
+      input: fileStream,
+      crlfDelay: Infinity
+    })
 
-    // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
-    core.debug(`Waiting ${ms} milliseconds ...`)
+    let lineNumber = 0
 
-    // Log the current timestamp, wait, then log the new timestamp
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
-
-    // Set outputs for other workflow steps to use
-    core.setOutput('time', new Date().toTimeString())
+    for await (const line of rl) {
+      lineNumber++
+      // Simplified logic for demonstration
+      patterns.forEach(pattern => {
+        if (pattern.regex.test(line)) {
+          console.log(`Line ${lineNumber}: ${pattern.result}`)
+          // Use core.setOutput if you need to pass this information to other steps
+        }
+      })
+    }
   } catch (error) {
-    // Fail the workflow run if an error occurs
     core.setFailed(error.message)
   }
 }
 
-module.exports = {
-  run
-}
+// Get inputs
+const filePath = core.getInput('file-path')
+const showLines = core.getInput('show-lines') // Use this variable as needed in your logic
+
+checkFile(filePath)
