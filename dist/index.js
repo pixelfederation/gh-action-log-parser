@@ -2729,47 +2729,47 @@ const core = __nccwpck_require__(186);
 const fs = __nccwpck_require__(147);
 const readline = __nccwpck_require__(521);
 
-async function loadPatterns(logType) {
-  try {
-    const patternsPath = `./patterns/${logType}.json`;
-    const patterns = await __nccwpck_require__(70)(patternsPath);
-    return patterns.default.map(pattern => ({
-      ...pattern,
-      regex: new RegExp(pattern.regex),
-    }));
-  } catch (error) {
-    core.setFailed(`Failed to load patterns file for logType '${logType}': ${error.message}`);
-    return [];
-  }
-}
+// async function loadPatterns(logType) {
+//   try {
+//     const patternsPath = `./patterns/${logType}.json`;
+//     const patterns = await import(patternsPath);
+//     return patterns.default.map(pattern => ({
+//       ...pattern,
+//       regex: new RegExp(pattern.regex),
+//     }));
+//   } catch (error) {
+//     core.setFailed(`Failed to load patterns file for logType '${logType}': ${error.message}`);
+//     return [];
+//   }
+// }
 
-async function checkFile(filePath, patterns) {
-  try {
-    const fileStream = fs.createReadStream(filePath);
-    const rl = readline.createInterface({
-      input: fileStream,
-      crlfDelay: Infinity
-    });
+// async function checkFile(filePath, patterns) {
+//   try {
+//     const fileStream = fs.createReadStream(filePath);
+//     const rl = readline.createInterface({
+//       input: fileStream,
+//       crlfDelay: Infinity
+//     });
 
-    let lineNumber = 0;
+//     let lineNumber = 0;
 
-    for await (const line of rl) {
-      lineNumber++;
+//     for await (const line of rl) {
+//       lineNumber++;
 
-      patterns.forEach(pattern => {
-        if (pattern.regex.test(line)) {
-          let message = `Line ${lineNumber}: ${pattern.result}`;
-          if (pattern.showLine && pattern.showLine > 0) {
-            message += ` | Line content: "${line}"`;
-          }
-          console.log(message);
-        }
-      });
-    }
-  } catch (error) {
-    core.setFailed(`An error occurred while processing the file: ${error.message}`);
-  }
-}
+//       patterns.forEach(pattern => {
+//         if (pattern.regex.test(line)) {
+//           let message = `Line ${lineNumber}: ${pattern.result}`;
+//           if (pattern.showLine && pattern.showLine > 0) {
+//             message += ` | Line content: "${line}"`;
+//           }
+//           console.log(message);
+//         }
+//       });
+//     }
+//   } catch (error) {
+//     core.setFailed(`An error occurred while processing the file: ${error.message}`);
+//   }
+// }
 
 async function run() {
   try {
@@ -2788,25 +2788,6 @@ async function run() {
 
 run();
 
-
-/***/ }),
-
-/***/ 70:
-/***/ ((module) => {
-
-function webpackEmptyAsyncContext(req) {
-	// Here Promise.resolve().then() is used instead of new Promise() to prevent
-	// uncaught exception popping up in devtools
-	return Promise.resolve().then(() => {
-		var e = new Error("Cannot find module '" + req + "'");
-		e.code = 'MODULE_NOT_FOUND';
-		throw e;
-	});
-}
-webpackEmptyAsyncContext.keys = () => ([]);
-webpackEmptyAsyncContext.resolve = webpackEmptyAsyncContext;
-webpackEmptyAsyncContext.id = 70;
-module.exports = webpackEmptyAsyncContext;
 
 /***/ }),
 
@@ -2939,11 +2920,6 @@ module.exports = require("util");
 /******/ 	}
 /******/ 	
 /************************************************************************/
-/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__nccwpck_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ 	})();
-/******/ 	
 /******/ 	/* webpack/runtime/compat */
 /******/ 	
 /******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";
