@@ -2722,45 +2722,6 @@ exports["default"] = _default;
 
 /***/ }),
 
-/***/ 666:
-/***/ ((__unused_webpack_module, __webpack_exports__, __nccwpck_require__) => {
-
-"use strict";
-__nccwpck_require__.r(__webpack_exports__);
-/* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ([
-  {
-    "regex": "Android dependencies have to be re\\-resolved",
-    "result": "Android dependencies are not resolved.",
-    "showLine": 0
-  },
-  {
-    "regex": "Upload Failed\\:",
-    "result": "Upload failed.",
-    "showLine": 0
-  },
-  {
-    "regex": "\\: error",
-    "result": "Compilation error.",
-    "showLine": 5
-  },
-  {
-    "regex": "Task \"Exporting development IPA from xcode archive\" failed",
-    "result": "ios certificate error.",
-    "showLine": 0
-  },
-  {
-    "regex": "file must contain a higher version than that of the previously approved version",
-    "result": "Cannot upload the same version to apple store.",
-    "showLine": 0
-  }
-]);
-
-
-/***/ }),
-
 /***/ 713:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
@@ -2768,7 +2729,32 @@ const core = __nccwpck_require__(186);
 // const fs = require('fs');
 // const readline = require('readline');
 
-const nodePatterns = __nccwpck_require__(666)
+// const nodePatterns = require('../patterns/unity.js')
+
+function loadPatterns(logType) {
+  try {
+    // Define a map or object with known logTypes and corresponding module paths
+    const patternFiles = {
+      unity: './patterns/unity.js',
+      node: './patterns/node.js',
+      // Add other logTypes and their corresponding pattern files here
+    };
+
+    // Check if the logType is supported and require the corresponding pattern file
+    if (patternFiles[logType]) {
+      const patterns = require(patternFiles[logType]);
+      return patterns.map(pattern => ({
+        ...pattern,
+        regex: new RegExp(pattern.regex),
+      }));
+    } else {
+      throw new Error(`Unsupported logType '${logType}'.`);
+    }
+  } catch (error) {
+    core.setFailed(`Failed to load patterns for logType '${logType}': ${error.message}`);
+    return [];
+  }
+}
 
 // async function loadPatterns(logType) {
 //   try {
@@ -2818,8 +2804,8 @@ async function run() {
     const filePath = core.getInput('filePath');
     const logType = core.getInput('logType');
 
-    console.log(`_ok4_`)
-    // const patterns = await loadPatterns(logType);
+    console.log(`_ok6_`)
+    const patterns = await loadPatterns(logType);
 
     // if (patterns && patterns.length > 0) {
     //   await checkFile(filePath, patterns);
@@ -2956,34 +2942,6 @@ module.exports = require("util");
 /******/ 	}
 /******/ 	
 /************************************************************************/
-/******/ 	/* webpack/runtime/define property getters */
-/******/ 	(() => {
-/******/ 		// define getter functions for harmony exports
-/******/ 		__nccwpck_require__.d = (exports, definition) => {
-/******/ 			for(var key in definition) {
-/******/ 				if(__nccwpck_require__.o(definition, key) && !__nccwpck_require__.o(exports, key)) {
-/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 				}
-/******/ 			}
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__nccwpck_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/make namespace object */
-/******/ 	(() => {
-/******/ 		// define __esModule on exports
-/******/ 		__nccwpck_require__.r = (exports) => {
-/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 			}
-/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 		};
-/******/ 	})();
-/******/ 	
 /******/ 	/* webpack/runtime/compat */
 /******/ 	
 /******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";

@@ -1,4 +1,4 @@
-export default [
+module.exports = [
   {
     "regex": "Android dependencies have to be re\\-resolved",
     "result": "Android dependencies are not resolved.",
