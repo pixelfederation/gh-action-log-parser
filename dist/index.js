@@ -2726,8 +2726,8 @@ exports["default"] = _default;
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __nccwpck_require__) => {
 
 const core = __nccwpck_require__(186);
-const fs = __nccwpck_require__(147);
-const readline = __nccwpck_require__(521);
+// const fs = require('fs');
+// const readline = require('readline');
 
 // async function loadPatterns(logType) {
 //   try {
@@ -2772,18 +2772,19 @@ const readline = __nccwpck_require__(521);
 // }
 
 async function run() {
-  try {
-    const filePath = core.getInput('filePath');
-    const logType = core.getInput('logType');
+  // try {
+  // const filePath = core.getInput('filePath');
+  // const logType = core.getInput('logType');
 
-    // const patterns = await loadPatterns(logType);
+  console.log(`_ok_`)
+  // const patterns = await loadPatterns(logType);
 
-    // if (patterns && patterns.length > 0) {
-    //   await checkFile(filePath, patterns);
-    // }
-  } catch (error) {
-    core.setFailed(`Action failed with error: ${error}`);
-  }
+  // if (patterns && patterns.length > 0) {
+  //   await checkFile(filePath, patterns);
+  // }
+  // } catch (error) {
+  //   core.setFailed(`Action failed with error: ${error}`);
+  // }
 }
 
 run();
@@ -2860,14 +2861,6 @@ module.exports = require("os");
 
 "use strict";
 module.exports = require("path");
-
-/***/ }),
-
-/***/ 521:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("readline");
 
 /***/ }),
 
