@@ -45,6 +45,14 @@ function loadPatterns(logType) {
 //   }
 // }
 async function checkFile(filePath, patterns) {
+  // Check if the file exists before attempting to open it
+  if (!fs.existsSync(filePath)) {
+    const errorMessage = `The specified file does not exist: ${filePath}`;
+    core.setFailed(errorMessage);
+    console.error(errorMessage);
+    return; // Exit the function if the file does not exist
+  }
+
   try {
     const fileStream = fs.createReadStream(filePath);
     const rl = readline.createInterface({
@@ -69,6 +77,7 @@ async function checkFile(filePath, patterns) {
     }
   } catch (error) {
     core.setFailed(`An error occurred while processing the file: ${error.message}`);
+    // console.error(`An error occurred while processing the file: ${error.message}`);
   }
 }
 
