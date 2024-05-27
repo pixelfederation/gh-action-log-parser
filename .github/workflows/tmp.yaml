@@ -35,7 +35,7 @@ jobs:
       - name: parse
         uses: pixelfederation/gh-action-log-parser@wip
         with:
-          filePath: "da2.txt"
+          filePath: "da2.txt1"
 
 
 #   prepare:
