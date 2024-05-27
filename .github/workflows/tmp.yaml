@@ -3,48 +3,10 @@ name: tmp
 # Global env variables
 
 on:
-  push:
-    paths:
-      - '.github/workflows/tmp.yaml'
+  # push:
+  #   paths:
+  #     - '.github/workflows/tmp.yaml'
   #     - '.github/actions/docker/action.yaml'
-  # create:
-  #   tags:
-  #     - '*'
-  workflow_call:
-    inputs:
-      branch_input:
-        description: 'Branch'
-        type: string
-      build_config_key:
-        description: 'Build config name'
-        type: string
-        default: 'Apple_DEV'
-      development_options:
-        description: 'Development options'
-        type: string
-        default: 'disabled'
-      upload_options:
-        description: 'Upload options'
-        type: string
-        default: 'store'
-      clear_folder:
-        description: 'Clear selected folder before build'
-        type: string
-        default: 'disabled'
-      push_addressables_to_git:
-        description: 'Push addressables to git'
-        default: true
-        type: boolean
-      update_addressables_only:
-        description: 'Update addressables only'
-        default: false
-        type: boolean
-      content_state_file:
-        description: 'Name of addressables.content.state.bin file to update'
-        type: string
-      build_number:
-        description: 'Build number. Default empty. Use only for build number override on S3.'
-        type: string
   workflow_dispatch:
   #   inputs:
   #   # server_branch:

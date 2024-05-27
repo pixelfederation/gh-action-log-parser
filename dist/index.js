@@ -2726,8 +2726,8 @@ exports["default"] = _default;
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 const core = __nccwpck_require__(186);
-// const fs = require('fs');
-// const readline = require('readline');
+const fs = __nccwpck_require__(147);
+const readline = __nccwpck_require__(521);
 
 // const nodePatterns = require('./patterns/unity.js')
 
@@ -2804,7 +2804,7 @@ async function run() {
     const filePath = core.getInput('filePath');
     const logType = core.getInput('logType');
 
-    console.log(`_ok7_`)
+    console.log(`_ok8_`)
     const patterns = await loadPatterns(logType);
 
     if (patterns && patterns.length > 0) {
@@ -2891,6 +2891,14 @@ module.exports = require("os");
 
 "use strict";
 module.exports = require("path");
+
+/***/ }),
+
+/***/ 521:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("readline");
 
 /***/ }),
 

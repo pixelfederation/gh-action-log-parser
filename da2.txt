@@ -1,0 +1,6 @@
+                                                   @"adLoadFailureInfo" : error.adLoadFailureInfo ?: @""}];
+                                                                                ^
+In module 'AppLovinSDK' imported from /redacted/1.53.1-v973.tmp:
+/Users/redacted/Library/Developer/Xcode/DerivedData/redacted/ArchiveIntermediates/Unity-iPhone/BuildProductsPath/Release-iphoneos/Headers/MAError.h:57:77: note: 'adLoadFailureInfo' has been explicitly marked deprecated here
+@property (nonatomic, copy, readonly, nullable) NSString *adLoadFailureInfo __deprecated_msg("The ad load failure info string is deprecated and removed in a future SDK version. Please use `-[MAError waterfall]` instead.");
+ERROR ITMS-90062: This bundle is invalid. The value for key CFBundleShortVersionString [1.53.1] in the Info.plist file must contain a higher version than that of the previously approved version [1.53.1]. Please find more information about CFBundleShortVersionString at https://developer.apple.com/documentation/bundleresources/information_property_list/cfbundleshortversionstring

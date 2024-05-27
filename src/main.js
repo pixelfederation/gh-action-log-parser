@@ -1,6 +1,6 @@
 const core = require('@actions/core');
-// const fs = require('fs');
-// const readline = require('readline');
+const fs = require('fs');
+const readline = require('readline');
 
 // const nodePatterns = require('./patterns/unity.js')
 
@@ -77,7 +77,7 @@ async function run() {
     const filePath = core.getInput('filePath');
     const logType = core.getInput('logType');
 
-    console.log(`_ok7_`)
+    console.log(`_ok8_`)
     const patterns = await loadPatterns(logType);
 
     if (patterns && patterns.length > 0) {
