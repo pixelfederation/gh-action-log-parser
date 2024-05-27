@@ -2757,7 +2757,6 @@ function loadPatterns(logType) {
 }
 
 async function checkFile(filePath, patterns) {
-  // Check if the file exists before attempting to open it
   if (!fs.existsSync(filePath)) {
     const errorMessage = `The specified file does not exist: ${filePath}`;
     core.setFailed(errorMessage);
@@ -2774,41 +2773,38 @@ async function checkFile(filePath, patterns) {
 
     let lineNumber = 0;
     let linesBuffer = []; // Buffer to store lines for context
+    const maxLinesToShow = Math.max(...patterns.map(p => p.showLine)); // Find the maximum showLine value
 
     for await (const line of rl) {
       lineNumber++;
       linesBuffer.push(line); // Add the current line to the buffer
 
-      for (const pattern of patterns) {
+      // Ensure the buffer does not grow larger than the maximum lines needed
+      if (linesBuffer.length > maxLinesToShow) {
+        linesBuffer.shift(); // Remove the oldest line if buffer exceeds the size
+      }
+
+      patterns.forEach(pattern => {
         const regex = new RegExp(pattern.regex);
-        // Check if the current line matches the pattern
         if (regex.test(line)) {
           let message = `Line ${lineNumber}: ${pattern.result}`;
-
-          // Determine the number of lines to show based on showLine
-          if (pattern.showLine && pattern.showLine > 0) {
-            // Calculate start index for slicing the buffer to get the context lines
-            let startIndex = Math.max(0, linesBuffer.length - pattern.showLine);
-            let contextLines = linesBuffer.slice(startIndex).join("\n");
+          // If showLine is enabled for this pattern, include the context lines
+          if (pattern.showLine > 0) {
+            // Calculate how many lines of context to include
+            const contextStartIndex = Math.max(0, linesBuffer.length - pattern.showLine);
+            const contextLines = linesBuffer.slice(contextStartIndex).join("\n");
             message += `\nContext Lines:\n${contextLines}`;
           }
 
           console.log(message);
-
-          // Ensure the buffer is trimmed to only contain the maximum showLine number of lines
-          if (linesBuffer.length > pattern.showLine) {
-            linesBuffer = linesBuffer.slice(-pattern.showLine);
-          }
         }
-      }
+      });
     }
   } catch (error) {
-    // core.setFailed(`An error occurred while processing the file: ${error.message}`);
-    core.setFailed(`An error occurred while processing the file: ${error.message} _okok_`);
-    // console.error(`An error occurred while processing the file: ${error.message}`);
+    core.setFailed(`An error occurred while processing the file: ${error.message}`);
+    console.error(`An error occurred while processing the file: ${error.message}`);
   }
 }
-
 
 // async function checkFile(filePath, patterns) {
 //   // Check if the file exists before attempting to open it
@@ -2852,7 +2848,6 @@ async function run() {
     const filePath = core.getInput('filePath');
     const logType = core.getInput('logType');
 
-    console.log(`_ok81_`)
     const patterns = await loadPatterns(logType);
 
     if (patterns && patterns.length > 0) {

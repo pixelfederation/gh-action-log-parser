@@ -12,7 +12,7 @@ module.exports = [
   {
     "regex": "\\: error",
     "result": "Compilation error.",
-    "showLine": 5
+    "showLine": 3
   },
   {
     "regex": "Task \"Exporting development IPA from xcode archive\" failed",
