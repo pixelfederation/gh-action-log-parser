@@ -4,18 +4,19 @@ const core = require('@actions/core');
 
 async function loadPatterns(logType) {
   try {
-    const patternsPath = `./patterns/${logType}.json`;
-    const patterns = await import(patternsPath);
-    return patterns.default.map(pattern => ({
+    // Dynamically construct the module path and import the patterns module
+    const modulePath = `./patterns/${logType}.js`;
+    const patternsModule = await import(modulePath);
+    const patterns = patternsModule.default.map(pattern => ({
       ...pattern,
       regex: new RegExp(pattern.regex),
     }));
+    return patterns;
   } catch (error) {
-    core.setFailed(`Failed to load patterns file for logType '${logType}': ${error.message}`);
+    core.setFailed(`Failed to load patterns for logType '${logType}': ${error.message}`);
     return [];
   }
 }
-
 // async function checkFile(filePath, patterns) {
 //   try {
 //     const fileStream = fs.createReadStream(filePath);
@@ -49,7 +50,7 @@ async function run() {
     const filePath = core.getInput('filePath');
     const logType = core.getInput('logType');
 
-    console.log(`_ok2_`)
+    console.log(`_ok3_`)
     const patterns = await loadPatterns(logType);
 
     // if (patterns && patterns.length > 0) {
