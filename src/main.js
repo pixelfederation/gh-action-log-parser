@@ -45,19 +45,19 @@ const core = require('@actions/core');
 // }
 
 async function run() {
-  // try {
-  const filePath = core.getInput('filePath');
-  const logType = core.getInput('logType');
+  try {
+    const filePath = core.getInput('filePath');
+    const logType = core.getInput('logType');
 
-  console.log(`_ok1_`)
-  // const patterns = await loadPatterns(logType);
+    console.log(`_ok1_`)
+    // const patterns = await loadPatterns(logType);
 
-  // if (patterns && patterns.length > 0) {
-  //   await checkFile(filePath, patterns);
-  // }
-  // } catch (error) {
-  //   core.setFailed(`Action failed with error: ${error}`);
-  // }
+    // if (patterns && patterns.length > 0) {
+    //   await checkFile(filePath, patterns);
+    // }
+  } catch (error) {
+    core.setFailed(`Action failed with error: ${error}`);
+  }
 }
 
 module.exports = {
