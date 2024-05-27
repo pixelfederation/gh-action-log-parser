@@ -2804,7 +2804,7 @@ async function checkFile(filePath, patterns) {
     }
   } catch (error) {
     core.setFailed(`An error occurred while processing the file: ${error.message}`);
-    console.error(`An error occurred while processing the file: ${error.message}`);
+    // console.error(`An error occurred while processing the file: ${error.message}`);
   }
 }
 
