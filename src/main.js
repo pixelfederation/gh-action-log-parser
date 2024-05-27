@@ -2,14 +2,14 @@ const core = require('@actions/core');
 // const fs = require('fs');
 // const readline = require('readline');
 
-const nodePatterns = require('./patterns/unity.js')
+// const nodePatterns = require('./patterns/unity.js')
 
 function loadPatterns(logType) {
   try {
     // Define a map or object with known logTypes and corresponding module paths
     const patternFiles = {
       unity: './patterns/unity.js',
-      node: './patterns/node.js',
+      // node: './patterns/node.js',
       // Add other logTypes and their corresponding pattern files here
     };
 
@@ -44,33 +44,33 @@ function loadPatterns(logType) {
 //     return [];
 //   }
 // }
-// async function checkFile(filePath, patterns) {
-//   try {
-//     const fileStream = fs.createReadStream(filePath);
-//     const rl = readline.createInterface({
-//       input: fileStream,
-//       crlfDelay: Infinity
-//     });
+async function checkFile(filePath, patterns) {
+  try {
+    const fileStream = fs.createReadStream(filePath);
+    const rl = readline.createInterface({
+      input: fileStream,
+      crlfDelay: Infinity
+    });
 
-//     let lineNumber = 0;
+    let lineNumber = 0;
 
-//     for await (const line of rl) {
-//       lineNumber++;
+    for await (const line of rl) {
+      lineNumber++;
 
-//       patterns.forEach(pattern => {
-//         if (pattern.regex.test(line)) {
-//           let message = `Line ${lineNumber}: ${pattern.result}`;
-//           if (pattern.showLine && pattern.showLine > 0) {
-//             message += ` | Line content: "${line}"`;
-//           }
-//           console.log(message);
-//         }
-//       });
-//     }
-//   } catch (error) {
-//     core.setFailed(`An error occurred while processing the file: ${error.message}`);
-//   }
-// }
+      patterns.forEach(pattern => {
+        if (pattern.regex.test(line)) {
+          let message = `Line ${lineNumber}: ${pattern.result}`;
+          if (pattern.showLine && pattern.showLine > 0) {
+            message += ` | Line content: "${line}"`;
+          }
+          console.log(message);
+        }
+      });
+    }
+  } catch (error) {
+    core.setFailed(`An error occurred while processing the file: ${error.message}`);
+  }
+}
 
 async function run() {
   try {
@@ -80,9 +80,10 @@ async function run() {
     console.log(`_ok7_`)
     const patterns = await loadPatterns(logType);
 
-    // if (patterns && patterns.length > 0) {
-    //   await checkFile(filePath, patterns);
-    // }
+    if (patterns && patterns.length > 0) {
+      await checkFile(filePath, patterns);
+    }
+
   } catch (error) {
     core.setFailed(`Action failed with error: ${error}`);
   }
