@@ -2,7 +2,7 @@ const core = require('@actions/core');
 // const fs = require('fs');
 // const readline = require('readline');
 
-// const nodePatterns = require('../patterns/unity.js')
+const nodePatterns = require('./patterns/unity.js')
 
 function loadPatterns(logType) {
   try {
