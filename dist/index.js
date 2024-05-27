@@ -2776,11 +2776,11 @@ async function run() {
     const filePath = core.getInput('filePath');
     const logType = core.getInput('logType');
 
-    const patterns = await loadPatterns(logType);
+    // const patterns = await loadPatterns(logType);
 
-    if (patterns && patterns.length > 0) {
-      await checkFile(filePath, patterns);
-    }
+    // if (patterns && patterns.length > 0) {
+    //   await checkFile(filePath, patterns);
+    // }
   } catch (error) {
     core.setFailed(`Action failed with error: ${error}`);
   }

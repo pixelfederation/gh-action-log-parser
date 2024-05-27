@@ -1,0 +1,187 @@
+name: tmp
+
+# Global env variables
+
+on:
+  push:
+    paths:
+      - '.github/workflows/tmp.yaml'
+  #     - '.github/actions/docker/action.yaml'
+  # create:
+  #   tags:
+  #     - '*'
+  workflow_call:
+    inputs:
+      branch_input:
+        description: 'Branch'
+        type: string
+      build_config_key:
+        description: 'Build config name'
+        type: string
+        default: 'Apple_DEV'
+      development_options:
+        description: 'Development options'
+        type: string
+        default: 'disabled'
+      upload_options:
+        description: 'Upload options'
+        type: string
+        default: 'store'
+      clear_folder:
+        description: 'Clear selected folder before build'
+        type: string
+        default: 'disabled'
+      push_addressables_to_git:
+        description: 'Push addressables to git'
+        default: true
+        type: boolean
+      update_addressables_only:
+        description: 'Update addressables only'
+        default: false
+        type: boolean
+      content_state_file:
+        description: 'Name of addressables.content.state.bin file to update'
+        type: string
+      build_number:
+        description: 'Build number. Default empty. Use only for build number override on S3.'
+        type: string
+  workflow_dispatch:
+  #   inputs:
+  #   # server_branch:
+  #   #   required: true
+  #   #   type:
+  #   #   default: 'dev'
+  #     logLevel:
+  #       description: 'Log level'
+  #       required: true
+  #       # default: 'warning'
+  #       type: choice
+  #       # options: ${{fromJson(env.chooice)}}
+  #       options:
+  #         - info
+  #         - ${{fromJson(env.choice)}}
+    # input variables - for automatic builds based on tag or push we need to figure out how to generate values
+  # push:
+
+# ---
+jobs:
+  parse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: parse
+        uses: pixelfederation/gh-action-log-parser@wip
+
+
+#   prepare:
+#     # uses: pixelfederation/gh-action-gh-release/.github/workflows/private-wf.yaml@main
+#     runs-on: pxfd-linux-c1-amd64
+#
+#     steps:
+#       # - uses: actions/checkout@v4
+#
+#       - name: Configure AWS Credentials
+#         uses: aws-actions/configure-aws-credentials@v4
+#         with:
+#           role-to-assume: arn:aws:iam::810441965206:role/gha-runner-role
+#           aws-region: eu-west-1
+#           role-chaining: true
+#           retry-max-attempts: 3
+#           role-skip-session-tagging: true
+#
+#       - run: |
+#           aws s3 ls s3://airflow-dev-810441965206/
+#
+#       - run: |
+#           aws s3 ls s3://airflow-dev-810441965206/dags/
+
+      # - run: |
+      #     binFiles=$(echo "${{ env.INPUT }}" | jq -Rc 'split(",") | @json')
+
+#
+#       # - run: |
+#       #     echo ok> tmp.txt
+#       #     aws s3 cp tmp.txt s3://airflow-dev-810441965206/
+
+      # - uses: docker://alpine:3.18.4
+      #   with:
+      #     entrypoint: pwd
+
+      # - uses: actions/hello-world-docker-action@v2
+      #   with:
+      #     who-to-greet: 'Mona the Octocat'
+
+      # - name: Set Docker image tag
+      #   id: set-tag
+      #   run: |
+      #     echo "tag=3.18.0" >> $GITHUB_OUTPUT
+      #
+      # - uses: ./.github/actions/docker/
+      #   env:
+      #     TEST_OUT: ok
+      #   with:
+      #     image: alpine:${{ steps.set-tag.outputs.tag }}
+      #     args: env
+      #     docker_env: |
+      #       TEST_IN1=ok
+      #       TEST_IN2=ok
+
+      # - name: Set Docker image tag
+      #   id: set-tag
+      #   run: |
+      #     echo "tag=3.18.0" >> $GITHUB_OUTPUT
+      #
+      # - name: Use Docker image
+      #   env:
+      #     tag: 3.18.0
+      #   uses: docker://alpine:${ tag }
+
+      # - name: Set image tag
+      #   run: |
+      #     env
+      #     docker pull alpine:3.18.0
+      #     docker pull alpine:3.17.3
+        # env:
+  #     #     sub: "VAR"
+  #     #   run: |
+  #     #     echo "TEST_VAR=${{ vars.TEST_VAR }}"
+  #     - name: release
+  #       uses: pixelfederation/gh-action-gh-release@main
+
+# ---
+# name: Docker build and push to ECR
+#
+# env:
+#   ecr_username: AWS
+#   ecr_registry: 266775278674.dkr.ecr.eu-west-1.amazonaws.com
+#   ecr_repo: zeppelin
+#   vault_url: https://vault.kube.shared.pxfd.tech
+#   vault_role: action-github-runner
+#
+#
+# on:
+#   push:
+#     tags:
+#     - '*'
+
+# jobs:
+#   build-and-push:
+#     strategy:
+#       matrix:
+#         arch:
+#           - amd64
+#     runs-on: pxfd-linux-c1-${{ matrix.arch }}
+#
+#     steps:
+#       - name: test
+#         run: |
+#           echo "ok"
+#           echo "sleep 10"
+#           sleep 10
+#      - name: Get ECR login
+#        run: |
+#          set -u
+#          ECR_PASSWORD=$(aws ecr get-login-password)
+#          echo "::add-mask::${ECR_PASSWORD}"
+#          echo "ecr_password=${ECR_PASSWORD}" >> $GITHUB_ENV
