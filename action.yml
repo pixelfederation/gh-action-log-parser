@@ -10,6 +10,10 @@ inputs:
     description: 'Control how many lines to show (all, none, default)'
     required: false
     default: 'default'
+  log-type:
+    description: 'Type of log to check (e.g., node, python, java)'
+    required: false
+    default: 'unity'
 
 runs:
   using: node20

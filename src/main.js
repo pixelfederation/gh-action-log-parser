@@ -1,14 +1,23 @@
-const core = require('@actions/core')
-const fs = require('fs')
-const readline = require('readline')
+const core = require('@actions/core');
+const fs = require('fs');
+const path = require('path');
+const readline = require('readline');
 
-// Assuming patterns.json is placed in the same directory, or adjust accordingly
-const patterns = JSON.parse(fs.readFileSync('./patterns.json', 'utf8')).map(
-  pattern => ({
-    ...pattern,
-    regex: new RegExp(pattern.regex)
-  })
-)
+async function loadPatterns(logType) {
+  // Construct the file path using the patterns subdirectory and logType
+  const patternsPath = path.join(__dirname, 'patterns', `${logType}.json`);
+
+  try {
+    const patternsData = fs.readFileSync(patternsPath, 'utf8');
+    return JSON.parse(patternsData).map(pattern => ({
+      ...pattern,
+      regex: new RegExp(pattern.regex),
+    }));
+  } catch (error) {
+    core.setFailed(`Failed to load patterns file for logType '${logType}': ${error.message}`);
+    return []; // Return an empty array to prevent further execution
+  }
+}
 
 async function checkFile(filePath) {
   try {
@@ -35,8 +44,14 @@ async function checkFile(filePath) {
   }
 }
 
-// Get inputs
-const filePath = core.getInput('file-path')
-const showLines = core.getInput('show-lines') // Use this variable as needed in your logic
+async function run() {
+  const filePath = core.getInput('file-path');
+  const logType = core.getInput('log-type'); // Get the log type input
+  const patterns = await loadPatterns(logType); // Load patterns based on logType
 
-checkFile(filePath)
+  if (patterns.length > 0) {
+    await checkFile(filePath, patterns);
+  }
+}
+
+run().catch(err => core.setFailed(err.message));
