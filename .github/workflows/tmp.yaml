@@ -3,7 +3,7 @@ name: tmp
 # Global env variables
 
 on:
-  # push:
+  push:
   #   paths:
   #     - '.github/workflows/tmp.yaml'
   #     - '.github/actions/docker/action.yaml'

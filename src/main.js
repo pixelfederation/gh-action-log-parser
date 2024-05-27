@@ -31,9 +31,7 @@ function loadPatterns(logType) {
 
 async function checkFile(filePath, patterns) {
   if (!fs.existsSync(filePath)) {
-    const errorMessage = `The specified file does not exist: ${filePath}`;
-    core.setFailed(errorMessage);
-    console.error(errorMessage);
+    core.setFailed(`The specified file does not exist: ${filePath}`);
     return; // Exit the function if the file does not exist
   }
 
@@ -45,40 +43,53 @@ async function checkFile(filePath, patterns) {
     });
 
     let lineNumber = 0;
-    let linesBuffer = []; // Buffer to store lines for context
-    const maxLinesToShow = Math.max(...patterns.map(p => p.showLine)); // Find the maximum showLine value
+    let deferredMatches = []; // Store matches that need future lines for context
+    let linesBuffer = []; // Store recent lines for immediate context
 
     for await (const line of rl) {
       lineNumber++;
-      linesBuffer.push(line); // Add the current line to the buffer
+      linesBuffer.push(line); // Update the rolling buffer of recent lines
 
-      // Ensure the buffer does not grow larger than the maximum lines needed
-      if (linesBuffer.length > maxLinesToShow) {
-        linesBuffer.shift(); // Remove the oldest line if buffer exceeds the size
-      }
+      // Process deferred matches to see if we can print them now
+      deferredMatches = deferredMatches.filter(match => {
+        match.contextLines--;
+        if (match.contextLines <= 0) {
+          // We've collected enough context, so print the match
+          console.log(match.message + `\nContext:\n${match.lines.join("\n")}\n${line}`);
+          return false; // Remove match from deferredMatches
+        }
+        match.lines.push(line); // Add current line to the context of the deferred match
+        return true; // Keep match in deferredMatches for now
+      });
 
+      // Check current line against patterns
       patterns.forEach(pattern => {
         const regex = new RegExp(pattern.regex);
         if (regex.test(line)) {
-          let message = `Line ${lineNumber}: ${pattern.result}`;
-          // If showLine is enabled for this pattern, include the context lines
-          if (pattern.showLine > 0) {
-            // Calculate how many lines of context to include
-            const contextStartIndex = Math.max(0, linesBuffer.length - pattern.showLine);
-            const contextLines = linesBuffer.slice(contextStartIndex).join("\n");
-            message += `\nContext Lines:\n${contextLines}`;
-          }
-
-          console.log(message);
+          const match = {
+            message: `Line ${lineNumber}: ${pattern.result}`,
+            contextLines: pattern.showLine - 1, // Subtract 1 because the current line is part of context
+            lines: [...linesBuffer] // Copy current context
+          };
+          deferredMatches.push(match);
         }
       });
+
+      // Limit the size of linesBuffer to the maximum showLine value
+      const maxShowLine = Math.max(...patterns.map(p => p.showLine));
+      if (linesBuffer.length > maxShowLine) {
+        linesBuffer.shift(); // Remove the oldest line
+      }
     }
+
+    // After file processing, print any remaining matches with the context we have
+    deferredMatches.forEach(match => {
+      console.log(match.message + `\nContext:\n${match.lines.join("\n")}`);
+    });
   } catch (error) {
     core.setFailed(`An error occurred while processing the file: ${error.message}`);
-    console.error(`An error occurred while processing the file: ${error.message}`);
   }
 }
-
 // async function checkFile(filePath, patterns) {
 //   // Check if the file exists before attempting to open it
 //   if (!fs.existsSync(filePath)) {
