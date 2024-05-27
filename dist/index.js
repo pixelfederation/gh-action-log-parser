@@ -2722,6 +2722,45 @@ exports["default"] = _default;
 
 /***/ }),
 
+/***/ 666:
+/***/ ((__unused_webpack_module, __webpack_exports__, __nccwpck_require__) => {
+
+"use strict";
+__nccwpck_require__.r(__webpack_exports__);
+/* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ([
+  {
+    "regex": "Android dependencies have to be re\\-resolved",
+    "result": "Android dependencies are not resolved.",
+    "showLine": 0
+  },
+  {
+    "regex": "Upload Failed\\:",
+    "result": "Upload failed.",
+    "showLine": 0
+  },
+  {
+    "regex": "\\: error",
+    "result": "Compilation error.",
+    "showLine": 5
+  },
+  {
+    "regex": "Task \"Exporting development IPA from xcode archive\" failed",
+    "result": "ios certificate error.",
+    "showLine": 0
+  },
+  {
+    "regex": "file must contain a higher version than that of the previously approved version",
+    "result": "Cannot upload the same version to apple store.",
+    "showLine": 0
+  }
+]);
+
+
+/***/ }),
+
 /***/ 713:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
@@ -2729,21 +2768,23 @@ const core = __nccwpck_require__(186);
 // const fs = require('fs');
 // const readline = require('readline');
 
-async function loadPatterns(logType) {
-  try {
-    // Dynamically construct the module path and import the patterns module
-    const modulePath = `./patterns/${logType}.js`;
-    const patternsModule = await __nccwpck_require__(70)(modulePath);
-    const patterns = patternsModule.default.map(pattern => ({
-      ...pattern,
-      regex: new RegExp(pattern.regex),
-    }));
-    return patterns;
-  } catch (error) {
-    core.setFailed(`Failed to load patterns for logType '${logType}': ${error.message}`);
-    return [];
-  }
-}
+const nodePatterns = __nccwpck_require__(666)
+
+// async function loadPatterns(logType) {
+//   try {
+//     // Dynamically construct the module path and import the patterns module
+//     const modulePath = `./patterns/${logType}.js`;
+//     const patternsModule = await import(modulePath);
+//     const patterns = patternsModule.default.map(pattern => ({
+//       ...pattern,
+//       regex: new RegExp(pattern.regex),
+//     }));
+//     return patterns;
+//   } catch (error) {
+//     core.setFailed(`Failed to load patterns for logType '${logType}': ${error.message}`);
+//     return [];
+//   }
+// }
 // async function checkFile(filePath, patterns) {
 //   try {
 //     const fileStream = fs.createReadStream(filePath);
@@ -2777,8 +2818,8 @@ async function run() {
     const filePath = core.getInput('filePath');
     const logType = core.getInput('logType');
 
-    console.log(`_ok3_`)
-    const patterns = await loadPatterns(logType);
+    console.log(`_ok4_`)
+    // const patterns = await loadPatterns(logType);
 
     // if (patterns && patterns.length > 0) {
     //   await checkFile(filePath, patterns);
@@ -2791,25 +2832,6 @@ async function run() {
 module.exports = {
   run
 }
-
-/***/ }),
-
-/***/ 70:
-/***/ ((module) => {
-
-function webpackEmptyAsyncContext(req) {
-	// Here Promise.resolve().then() is used instead of new Promise() to prevent
-	// uncaught exception popping up in devtools
-	return Promise.resolve().then(() => {
-		var e = new Error("Cannot find module '" + req + "'");
-		e.code = 'MODULE_NOT_FOUND';
-		throw e;
-	});
-}
-webpackEmptyAsyncContext.keys = () => ([]);
-webpackEmptyAsyncContext.resolve = webpackEmptyAsyncContext;
-webpackEmptyAsyncContext.id = 70;
-module.exports = webpackEmptyAsyncContext;
 
 /***/ }),
 
@@ -2934,9 +2956,32 @@ module.exports = require("util");
 /******/ 	}
 /******/ 	
 /************************************************************************/
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__nccwpck_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__nccwpck_require__.o(definition, key) && !__nccwpck_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
 /******/ 	(() => {
 /******/ 		__nccwpck_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__nccwpck_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/compat */
