@@ -6,6 +6,10 @@ const readline = require('readline');
 async function loadPatterns(logType) {
   // Construct the file path using the patterns subdirectory and logType
   const patternsPath = path.join(__dirname, 'patterns', `${logType}.json`);
+  console.log(`patternsPath: ${patternsPath}`)
+  console.log(`__dirname: ${__dirname}`)
+  console.log(`logType: ${logType}`)
+
 
   try {
     const patternsData = fs.readFileSync(patternsPath, 'utf8');
@@ -45,8 +49,8 @@ async function checkFile(filePath) {
 }
 
 async function run() {
-  const filePath = core.getInput('file-path');
-  const logType = core.getInput('log-type'); // Get the log type input
+  const filePath = core.getInput('filePath');
+  const logType = core.getInput('logType'); // Get the log type input
   const patterns = await loadPatterns(logType); // Load patterns based on logType
 
   if (patterns.length > 0) {

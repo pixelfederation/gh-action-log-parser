@@ -2725,17 +2725,30 @@ exports["default"] = _default;
 /***/ 713:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __nccwpck_require__) => {
 
-const core = __nccwpck_require__(186)
-const fs = __nccwpck_require__(147)
-const readline = __nccwpck_require__(521)
+const core = __nccwpck_require__(186);
+const fs = __nccwpck_require__(147);
+const path = __nccwpck_require__(17);
+const readline = __nccwpck_require__(521);
 
-// Assuming patterns.json is placed in the same directory, or adjust accordingly
-const patterns = JSON.parse(fs.readFileSync('./patterns.json', 'utf8')).map(
-  pattern => ({
-    ...pattern,
-    regex: new RegExp(pattern.regex)
-  })
-)
+async function loadPatterns(logType) {
+  // Construct the file path using the patterns subdirectory and logType
+  const patternsPath = path.join(__dirname, 'patterns', `${logType}.json`);
+  console.log(`patternsPath: ${patternsPath}`)
+  console.log(`__dirname: ${__dirname}`)
+  console.log(`logType: ${logType}`)
+
+
+  try {
+    const patternsData = fs.readFileSync(patternsPath, 'utf8');
+    return JSON.parse(patternsData).map(pattern => ({
+      ...pattern,
+      regex: new RegExp(pattern.regex),
+    }));
+  } catch (error) {
+    core.setFailed(`Failed to load patterns file for logType '${logType}': ${error.message}`);
+    return []; // Return an empty array to prevent further execution
+  }
+}
 
 async function checkFile(filePath) {
   try {
@@ -2762,11 +2775,17 @@ async function checkFile(filePath) {
   }
 }
 
-// Get inputs
-const filePath = core.getInput('file-path')
-const showLines = core.getInput('show-lines') // Use this variable as needed in your logic
+async function run() {
+  const filePath = core.getInput('filePath');
+  const logType = core.getInput('logType'); // Get the log type input
+  const patterns = await loadPatterns(logType); // Load patterns based on logType
 
-checkFile(filePath)
+  if (patterns.length > 0) {
+    await checkFile(filePath, patterns);
+  }
+}
+
+run().catch(err => core.setFailed(err.message));
 
 
 /***/ }),

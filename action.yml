@@ -3,14 +3,14 @@ description: 'Check log files for specific patterns'
 
 # Define your inputs here.
 inputs:
-  file-path:
+  filePath:
     description: 'Path to the log file to check'
     required: true
-  show-lines:
+  showLines:
     description: 'Control how many lines to show (all, none, default)'
     required: false
     default: 'default'
-  log-type:
+  logType:
     description: 'Type of log to check (e.g., node, python, java)'
     required: false
     default: 'unity'
