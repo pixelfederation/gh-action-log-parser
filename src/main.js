@@ -46,10 +46,10 @@ const core = require('@actions/core');
 
 async function run() {
   // try {
-  // const filePath = core.getInput('filePath');
-  // const logType = core.getInput('logType');
+  const filePath = core.getInput('filePath');
+  const logType = core.getInput('logType');
 
-  console.log(`_ok_`)
+  console.log(`_ok1_`)
   // const patterns = await loadPatterns(logType);
 
   // if (patterns && patterns.length > 0) {
