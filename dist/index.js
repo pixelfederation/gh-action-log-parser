@@ -2770,56 +2770,37 @@ async function checkFile(filePath, patterns) {
     });
 
     let lineNumber = 0;
-    let deferredMatches = []; // Store matches that need future lines for context
+    let linesBuffer = []; // Buffer to store recent lines for context
 
     for await (const line of rl) {
       lineNumber++;
 
-      // Process deferred matches to see if we can print them now
-      deferredMatches = deferredMatches.filter(match => {
-        match.contextLines--;
-        if (match.contextLines <= 0) {
-          // If showLine is 0, only print the result, otherwise print the match and context
-          if (match.showLine === 0) {
-            console.log(match.message);
-          } else {
-            console.log(match.message + `\nContext:\n${match.lines.join("\n")}\n`);
-          }
-          return false; // Remove match from deferredMatches
-        }
-        match.lines.push(line); // Add current line to the context of the deferred match
-        return true; // Keep match in deferredMatches for now
-      });
+      // Update the rolling buffer of recent lines
+      linesBuffer.push(line);
 
-      // Check current line against patterns
       patterns.forEach(pattern => {
         const regex = new RegExp(pattern.regex);
         if (regex.test(line)) {
-          if (pattern.showLine === 0) {
-            // If showLine is 0, immediately print result without context
-            console.log(`Result: ${pattern.result}`);
-          } else {
-            // If showLine > 0, defer printing until we have enough context
-            const match = {
-              message: `Line ${lineNumber}: ${pattern.result}`,
-              showLine: pattern.showLine,
-              contextLines: pattern.showLine - 1, // Subtract 1 because the current line is part of context
-              lines: [line] // Start context with the current line
-            };
-            deferredMatches.push(match);
+          // Always print the line number and result
+          let message = `Line ${lineNumber}: ${pattern.result}`;
+
+          // If showLine is 1 or more, include the context lines
+          if (pattern.showLine > 0) {
+            // Grab the last N lines from the buffer, including the current line
+            const contextLines = linesBuffer.slice(-pattern.showLine).join("\n");
+            message += `\nContext Lines:\n${contextLines}`;
           }
+
+          console.log(message);
         }
       });
-    }
 
-    // After file processing, print any remaining matches with the context we have
-    deferredMatches.forEach(match => {
-      if (match.showLine === 0) {
-        console.log(match.message);
-      } else {
-        console.log(match.message + `\nContext:\n${match.lines.join("\n")}`);
+      // Limit the size of linesBuffer to the maximum showLine value to conserve memory
+      const maxShowLine = Math.max(...patterns.map(p => p.showLine), 1); // Ensure at least 1
+      while (linesBuffer.length > maxShowLine) {
+        linesBuffer.shift(); // Remove the oldest line
       }
-    });
+    }
   } catch (error) {
     core.setFailed(`An error occurred while processing the file: ${error.message}`);
   }
