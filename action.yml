@@ -1,0 +1,19 @@
+name: 'Log Pattern Checker'
+description: 'Check log files for specific patterns'
+
+inputs:
+  filePath:
+    description: 'Path to the log file to check'
+    required: true
+  showLines:
+    description: 'Control how many lines to show (all, none, default)'
+    required: false
+    default: 'default'
+  logType:
+    description: 'Type of log to check (e.g., node, python, java)'
+    required: false
+    default: 'unity'
+
+runs:
+  using: node20
+  main: dist/index.js
