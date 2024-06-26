@@ -11,7 +11,12 @@ module.exports = [
   },
   {
     "regex": "\\: error",
-    "result": "Compilation error.",
+    "result": "Error.",
+    "showLine": 3
+  },
+  {
+    "regex": "error\\:",
+    "result": "Error.",
     "showLine": 3
   },
   {
@@ -20,8 +25,28 @@ module.exports = [
     "showLine": 0
   },
   {
+    "regex": "Error Domain=DVTPortalServiceErrorDomain",
+    "result": "ios upload error.",
+    "showLine": 0
+  },
+  {
     "regex": "file must contain a higher version than that of the previously approved version",
     "result": "Cannot upload the same version to apple store.",
     "showLine": 0
+  },
+  {
+    "regex": "Nested Prefab problem",
+    "result": "Nested prefab problem.",
+    "showLine": 0
+  },
+  {
+    "regex": "UnityException\\: Creating asset at path",
+    "result": "Asset creation failed.",
+    "showLine": 0
+  },
+  {
+    "regex": "Object reference not set to an instance of an object",
+    "result": "null reference exception.",
+    "showLine": 3
   }
 ]
