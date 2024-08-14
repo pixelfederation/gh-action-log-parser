@@ -13,6 +13,13 @@ inputs:
     description: 'Type of log to check (e.g., node, python, java)'
     required: false
     default: 'unity'
+  matchOutputMaxChars:
+    description: 'Max size of matchOutput output variable'
+    required: false
+    default: '500'
+outputs:
+  matchOutput:
+    description: 'Print matched output also to variable'
 
 runs:
   using: node20

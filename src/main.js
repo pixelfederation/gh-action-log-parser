@@ -2,7 +2,8 @@ const core = require('@actions/core');
 const fs = require('fs');
 const readline = require('readline');
 
-// const nodePatterns = require('./patterns/unity.js')
+// store messages for output matchOutput
+let matchOutput = "";
 
 function loadPatterns(logType) {
   try {
@@ -96,17 +97,25 @@ function printMatch(match) {
     message += `\nContext Lines:\n${match.context.join("\n")}`;
   }
   console.log(message);
+  matchOutput += message + "\n";
 }
 
 async function run() {
   try {
     const filePath = core.getInput('filePath');
     const logType = core.getInput('logType');
+    const matchOutputMaxCharsInput = core.getInput('matchOutputMaxChars');
+    const matchOutputMaxChars = parseInt(matchOutputMaxCharsInput, 10);
+
+    if (isNaN(matchOutputMaxChars)) {
+      core.setFailed('Input "matchOutputMaxChars" is not a valid integer.');
+    }
 
     const patterns = await loadPatterns(logType);
 
     if (patterns && patterns.length > 0) {
       await checkFile(filePath, patterns);
+      core.setOutput("matchOutput", JSON.stringify(matchOutput.slice(0, matchOutputMaxChars) + "\n___Rest is truncated due to \"" + matchOutputMaxChars + "\" chars limit___\n"));
     }
 
   } catch (error) {
