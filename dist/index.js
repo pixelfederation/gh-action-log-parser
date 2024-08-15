@@ -2827,6 +2827,19 @@ function printMatch(match) {
   matchOutput += message + "\n";
 }
 
+function formatMatchOutput(match, outputMaxChars) {
+  if (match.length === 0) {
+      match = "--- No matches found ---";
+  } else if (match.length > outputMaxChars) {
+      let truncationNotice = "\n--- The rest of matches is truncated due to \"" + outputMaxChars + "\" chars limit ---";
+      match = match.substring(0, outputMaxChars - truncationNotice.length) + truncationNotice;
+  } else {
+      match += "\n--- The end of Matches ---";
+  }
+
+  return JSON.stringify(match);
+}
+
 async function run() {
   try {
     const filePath = core.getInput('filePath');
@@ -2842,7 +2855,7 @@ async function run() {
 
     if (patterns && patterns.length > 0) {
       await checkFile(filePath, patterns);
-      core.setOutput("matchOutput", JSON.stringify(matchOutput.slice(0, matchOutputMaxChars) + "\n___Rest is truncated due to \"" + matchOutputMaxChars + "\" chars limit___\n"));
+      core.setOutput("matchOutput", formatMatchOutput(matchOutput, matchOutputMaxChars));
     }
 
   } catch (error) {
