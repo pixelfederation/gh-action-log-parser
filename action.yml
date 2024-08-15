@@ -16,7 +16,7 @@ inputs:
   matchOutputMaxChars:
     description: 'Max size of matchOutput output variable'
     required: false
-    default: '500'
+    default: '10000'
 outputs:
   matchOutput:
     description: 'Print matched output also to variable'
