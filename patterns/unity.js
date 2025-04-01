@@ -48,5 +48,15 @@ module.exports = [
     "regex": "Object reference not set to an instance of an object",
     "result": "null reference exception.",
     "showLine": 3
+  },
+  {
+    "regex": "Builder Build target is not supported!",
+    "result": "Build target not supported. Please check for missing unity editor module",
+    "showLine": 0
+  },
+  {
+    "regex": "Build prerequisites are not met! Halting!",
+    "result": "Build prerequisites are not met!",
+    "showLine": 0
   }
 ]
