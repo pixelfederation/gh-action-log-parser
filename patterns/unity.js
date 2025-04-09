@@ -58,5 +58,10 @@ module.exports = [
     "regex": "Build prerequisites are not met! Halting!",
     "result": "Build prerequisites are not met!",
     "showLine": 0
-  }
+  },
+     {
+       "regex": "A player build cannot be executed while inside the player loop.",
+       "result": "A player build cannot be executed while inside the player loop.",
+       "showLine": 0
+     }
 ]
