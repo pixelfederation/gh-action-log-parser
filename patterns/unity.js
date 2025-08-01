@@ -59,9 +59,19 @@ module.exports = [
     "result": "Build prerequisites are not met!",
     "showLine": 0
   },
-     {
-       "regex": "A player build cannot be executed while inside the player loop.",
-       "result": "A player build cannot be executed while inside the player loop.",
-       "showLine": 0
-     }
+  {
+    "regex": "A player build cannot be executed while inside the player loop.",
+    "result": "A player build cannot be executed while inside the player loop.",
+    "showLine": 0
+  },
+  {
+    "regex": "[!] CocoaPods could not find compatible versions",
+    "result": "[!] CocoaPods could not find compatible versions",
+    "showLine": 4
+  },
+  {
+    "regex": "Execution failed for task",
+    "result": "Execution failed for task",
+    "showLine": 3
+  }
 ]

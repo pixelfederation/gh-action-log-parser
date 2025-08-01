@@ -1,7 +1,7 @@
 {
   "name": "gh-action-log-parser",
   "description": "GitHub Actions JavaScript Template",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "author": "",
   "private": true,
   "homepage": "https://github.com/actions/javascript-action#readme",
