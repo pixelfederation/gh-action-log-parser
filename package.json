@@ -39,7 +39,7 @@
     "extends": "./.github/linters/.eslintrc.yml"
   },
   "dependencies": {
-    "@actions/core": "^1.11.1"
+    "@actions/core": "^2.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.26.10",
